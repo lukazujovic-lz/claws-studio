@@ -1,0 +1,558 @@
+﻿<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nail Studio Glow - Zakazivanje</title>
+    <style>
+        :root {
+            --primary: #f472b6;
+            --primary-dark: #db2777;
+            --accent: #fbcfe8;
+            --bg: #fff5f8;
+            --card-bg: #ffffff;
+            --text-dark: #1f2937;
+            --text-muted: #6b7280;
+            --disabled: #e5e7eb;
+            --disabled-text: #9ca3af;
+            --shadow: 0 10px 25px -5px rgba(244, 114, 182, 0.2);
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-dark);
+            padding: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0 16px 0;
+            position: relative;
+        }
+
+        .brand-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #86198f;
+            margin-bottom: 4px;
+        }
+
+        .brand-subtitle {
+            font-size: 13px;
+            color: #a21caf;
+            font-weight: 500;
+        }
+
+        .admin-lock-btn {
+            position: absolute;
+            top: 10px;
+            right: 0;
+            background: var(--accent);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #86198f;
+            cursor: pointer;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(251, 207, 232, 0.6);
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: #831843;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            color: #9d174d;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #fbcfe8;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            background: #fff;
+            color: var(--text-dark);
+        }
+
+            input:focus, select:focus, textarea:focus {
+                border-color: var(--primary-dark);
+                box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.15);
+            }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .slot-btn {
+            padding: 12px;
+            border: 1.5px solid #fbcfe8;
+            border-radius: 12px;
+            background: #fff;
+            color: #be185d;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+            .slot-btn.selected {
+                background: linear-gradient(135deg, #f472b6, #db2777);
+                color: white;
+                border-color: transparent;
+            }
+
+            .slot-btn.disabled {
+                background: var(--disabled);
+                color: var(--disabled-text);
+                border-color: #d1d5db;
+                cursor: not-allowed;
+                text-decoration: line-through;
+            }
+
+            .slot-btn.blocked-admin {
+                background: #fee2e2;
+                color: #dc2626;
+                border-color: #fca5a5;
+            }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #f472b6, #db2777);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            margin-top: 10px;
+        }
+
+        .appointment-item {
+            background: #fff1f2;
+            border-left: 4px solid var(--primary-dark);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-sm {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-wa {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-call {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-del {
+            background: #ef4444;
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* MODAL PREKROJ ZA PIN */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <button class="admin-lock-btn" onclick="openPinModal()">🔒 Noktarka Ulaz</button>
+        <div class="brand-title">Nail Studio Glow</div>
+        <div class="brand-subtitle">Online zakazivanje termina</div>
+    </header>
+
+    <!-- KLIJENTSKI DEO -->
+    <div id="client-section">
+        <div class="card">
+            <div class="card-title">📅 1. Izaberite Datum i Vreme</div>
+
+            <div class="form-group">
+                <label>Datum zakazivanja</label>
+                <input type="date" id="app-date" onchange="loadSlots()">
+            </div>
+
+            <label>Dostupni termini (Trajanje: 2 sata)</label>
+            <div id="slots-container" class="slots-grid">
+                <!-- Termini -->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">💅 2. Vaši Podaci i Želje</div>
+            <form id="booking-form" onsubmit="submitBooking(event)">
+                <div class="form-group">
+                    <label>Ime i Prezime *</label>
+                    <input type="text" id="cust-name" required placeholder="npr. Ana Jovanović">
+                </div>
+
+                <div class="form-group">
+                    <label>Broj Telefona *</label>
+                    <input type="tel" id="cust-phone" required placeholder="npr. 0641234567">
+                </div>
+
+                <div class="form-group">
+                    <label>Usluga / Tehnika *</label>
+                    <select id="cust-service" required>
+                        <option value="Gel lak">Gel lak</option>
+                        <option value="Izlivanje">Izlivanje noktiju</option>
+                        <option value="Nadogradnja">Nadogradnja</option>
+                        <option value="Korekcija">Korekcija</option>
+                        <option value="Prirodni nokti">Sređivanje prirodnih noktiju</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Željena Dužina</label>
+                    <select id="cust-length">
+                        <option value="Kratki">Kratki</option>
+                        <option value="Srednji">Srednji</option>
+                        <option value="Dugi">Dugi</option>
+                        <option value="Ekstra dugi">Ekstra dugi</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Napomena / Želje za dizajn</label>
+                    <textarea id="cust-notes" rows="3" placeholder="Napišite ako želite poseban crtež, francuski manikir, cirkone, skidanje starog rada..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Potvrdi Zakazivanje</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD ZA NOKTARKU -->
+    <div id="admin-section" class="hidden">
+        <div class="card" style="border: 2px solid var(--primary-dark);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+                <div class="card-title" style="margin:0;">👑 Noktarka Dashboard</div>
+                <button onclick="logoutAdmin()" class="btn-sm btn-del">Odjavi se</button>
+            </div>
+
+            <div class="form-group">
+                <label>Izaberite datum za pregled i rad:</label>
+                <input type="date" id="admin-date" onchange="loadAdminView()">
+            </div>
+
+            <button class="btn-submit" style="background: #9333ea; margin-bottom: 16px;" onclick="toggleBlockDay()">
+                🚫 Blokiraj / Odblokiraj CEO DAN
+            </button>
+
+            <label style="margin-top:10px;">Blokiranje pojedinačnih sati (Pauze):</label>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+                Kliknite na satnicu da je blokirate/odblokirate (npr. ako radiš tek od 13h, blokiraj jutarnje termine):
+            </p>
+            <div id="admin-slots-manage" class="slots-grid" style="margin-bottom: 20px;">
+                <!-- Satnice za blokiranje -->
+            </div>
+
+            <hr style="border: 0; border-top: 1px dashed #fbcfe8; margin: 16px 0;">
+
+            <div class="card-title">📋 Zakazane klijentkinje za ovaj dan</div>
+            <div id="appointments-list">
+                <!-- Lista klijentkinja -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ZA PIN KOD (STRATNO SAKRIVEN) -->
+    <div id="pin-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <h3 style="color:#86198f; margin-bottom:10px;">Noktarka Ulaz</h3>
+            <p style="font-size:13px; color:#666; margin-bottom:15px;">Unesite Vaš PIN kod za pristup dashboard-u:</p>
+            <input type="password" id="pin-input" placeholder="Unesite PIN" style="text-align:center; font-size:18px; margin-bottom:15px;">
+            <div style="display:flex; gap:10px;">
+                <button class="btn-submit" style="margin:0; background:#6b7280;" onclick="closePinModal()">Otkaži</button>
+                <button class="btn-submit" style="margin:0;" onclick="checkPin()">Potvrdi</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const timeSlots = ["08:00 - 10:00", "10:00 - 12:00", "12:00 - 14:00", "14:00 - 16:00", "16:00 - 18:00", "18:00 - 20:00"];
+        let selectedSlot = null;
+        let adminPIN = "1304";
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('app-date').value = today;
+        document.getElementById('admin-date').value = today;
+
+        function getData(key) {
+            return JSON.parse(localStorage.getItem(key) || '{}');
+        }
+
+        function setData(key, val) {
+            localStorage.setItem(key, JSON.stringify(val));
+        }
+
+        function loadSlots() {
+            const date = document.getElementById('app-date').value;
+            const container = document.getElementById('slots-container');
+            container.innerHTML = '';
+
+            const bookings = getData('bookings_' + date);
+            const blockedSlots = getData('blocked_slots_' + date);
+            const blockedDays = getData('blocked_days');
+
+            if (blockedDays[date]) {
+                container.innerHTML = '<p style="grid-column:1/-1; color:#dc2626; font-weight:bold; text-align:center; padding:10px;">Ovaj dan je označen kao neradan.</p>';
+                return;
+            }
+
+            timeSlots.forEach(slot => {
+                const btn = document.createElement('button');
+                btn.className = 'slot-btn';
+                btn.type = 'button';
+
+                if (bookings[slot]) {
+                    btn.classList.add('disabled');
+                    btn.innerText = slot + '\n(Zauzeto)';
+                } else if (blockedSlots[slot]) {
+                    btn.classList.add('disabled');
+                    btn.innerText = slot + '\n(Pauza)';
+                } else {
+                    btn.innerText = slot;
+                    btn.onclick = () => {
+                        document.querySelectorAll('#slots-container .slot-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        selectedSlot = slot;
+                    };
+                }
+                container.appendChild(btn);
+            });
+        }
+
+        function submitBooking(e) {
+            e.preventDefault();
+            if (!selectedSlot) {
+                alert('Molimo Vas da prvo izaberete slobodan termin iz tabele!');
+                return;
+            }
+
+            const date = document.getElementById('app-date').value;
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const service = document.getElementById('cust-service').value;
+            const length = document.getElementById('cust-length').value;
+            const notes = document.getElementById('cust-notes').value;
+
+            const bookings = getData('bookings_' + date);
+            bookings[selectedSlot] = { name, phone, service, length, notes, time: selectedSlot };
+
+            setData('bookings_' + date, bookings);
+
+            alert('Hvala! Uspešno ste zakazali termin za ' + date + ' u ' + selectedSlot + '!');
+            document.getElementById('booking-form').reset();
+            selectedSlot = null;
+            loadSlots();
+        }
+
+        function openPinModal() {
+            document.getElementById('pin-input').value = '';
+            document.getElementById('pin-modal').classList.remove('hidden');
+        }
+
+        function closePinModal() {
+            document.getElementById('pin-modal').classList.add('hidden');
+        }
+
+        function checkPin() {
+            const pin = document.getElementById('pin-input').value;
+            if (pin === adminPIN) {
+                closePinModal();
+                document.getElementById('client-section').classList.add('hidden');
+                document.getElementById('admin-section').classList.remove('hidden');
+                loadAdminView();
+            } else {
+                alert('Netačan PIN kod!');
+            }
+        }
+
+        function logoutAdmin() {
+            document.getElementById('admin-section').classList.add('hidden');
+            document.getElementById('client-section').classList.remove('hidden');
+        }
+
+        function loadAdminView() {
+            const date = document.getElementById('admin-date').value;
+
+            // Satnice za blokiranje
+            const manageContainer = document.getElementById('admin-slots-manage');
+            manageContainer.innerHTML = '';
+
+            const blockedSlots = getData('blocked_slots_' + date);
+            const bookings = getData('bookings_' + date);
+
+            timeSlots.forEach(slot => {
+                const btn = document.createElement('button');
+                btn.className = 'slot-btn';
+                btn.type = 'button';
+
+                if (bookings[slot]) {
+                    btn.classList.add('disabled');
+                    btn.innerText = slot + '\n(Zakazano)';
+                } else if (blockedSlots[slot]) {
+                    btn.classList.add('blocked-admin');
+                    btn.innerText = slot + '\n(Blokirano)';
+                    btn.onclick = () => toggleBlockSlot(date, slot);
+                } else {
+                    btn.innerText = slot + '\n(Slobodno)';
+                    btn.onclick = () => toggleBlockSlot(date, slot);
+                }
+                manageContainer.appendChild(btn);
+            });
+
+            // Lista zakazivanja
+            const list = document.getElementById('appointments-list');
+            list.innerHTML = '';
+            const keys = Object.keys(bookings);
+
+            if (keys.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:10px;">Nema zakazanih klijentkinja za ovaj datum.</p>';
+                return;
+            }
+
+            keys.forEach(slot => {
+                const item = bookings[slot];
+                const div = document.createElement('div');
+                div.className = 'appointment-item';
+                div.innerHTML = `
+                        <strong style="color:var(--primary-dark); font-size:15px;">⏰ ${slot}</strong><br>
+                        <strong>👤 ${item.name}</strong><br>
+                        💅 <strong>Usluga:</strong> ${item.service} | <strong>Dužina:</strong> ${item.length}<br>
+                        📝 <strong>Napomena:</strong> ${item.notes || 'Nema napomene'}<br>
+                        <div class="action-btns">
+                            <a href="https://wa.me/${item.phone}" target="_blank" class="btn-sm btn-wa">WhatsApp</a>
+                            <a href="tel:${item.phone}" class="btn-sm btn-call">Pozovi</a>
+                            <button onclick="deleteBooking('${date}', '${slot}')" class="btn-sm btn-del">Obriši</button>
+                        </div>
+                    `;
+                list.appendChild(div);
+            });
+        }
+
+        function toggleBlockSlot(date, slot) {
+            const blockedSlots = getData('blocked_slots_' + date);
+            if (blockedSlots[slot]) {
+                delete blockedSlots[slot];
+            } else {
+                blockedSlots[slot] = true;
+            }
+            setData('blocked_slots_' + date, blockedSlots);
+            loadAdminView();
+            loadSlots();
+        }
+
+        function toggleBlockDay() {
+            const date = document.getElementById('admin-date').value;
+            const blockedDays = getData('blocked_days');
+            if (blockedDays[date]) {
+                delete blockedDays[date];
+                alert('Dan je ponovo otvoren za rad.');
+            } else {
+                blockedDays[date] = true;
+                alert('CEO DAN je sada blokiran za klijentkinje.');
+            }
+            setData('blocked_days', blockedDays);
+            loadAdminView();
+            loadSlots();
+        }
+
+        function deleteBooking(date, slot) {
+            if (confirm('Da li ste sigurni da želite obrisati ovaj termin?')) {
+                const bookings = getData('bookings_' + date);
+                delete bookings[slot];
+                setData('bookings_' + date, bookings);
+                loadAdminView();
+                loadSlots();
+            }
+        }
+
+        loadSlots();
+    </script>
+</body>
+</html>
